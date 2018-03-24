@@ -2,6 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
+def plot_an_image(image):
+#     """
+#     image : (400,)
+#     """
+    fig, ax = plt.subplots(figsize=(1, 1))
+    ax.matshow(image.reshape((20, 20)), cmap=matplotlib.cm.binary)
+    plt.xticks(np.array([]))  # just get rid of ticks
+    plt.yticks(np.array([]))
+    plt.show()
+#绘图函数
 
 def displayData(X, example_width = None):
     #DISPLAYDATA Display 2D data in a nice grid
@@ -11,7 +21,7 @@ def displayData(X, example_width = None):
 
     # Set example_width automatically if not passed in
     if example_width is None:
-        print(X.shape)
+        #print(X.shape)
         example_width = int(np.round(np.sqrt(X.shape[1])))
 
     m, n = X.shape
