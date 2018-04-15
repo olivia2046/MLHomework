@@ -32,6 +32,11 @@ def plotData(X, y):
     plt.plot(X[pos, 0], X[pos, 1], 'k+',linewidth=2, markersize=7);
     plt.plot(X[neg, 0], X[neg, 1], 'ko', markerfacecolor='y', markersize=7);
     
+    '''
+    #test for adding text label
+    for i in range(len(X)):
+        plt.text(X[i][0],X[i][1],y[i])'''
+    
     #plt.show()
     
     
@@ -56,7 +61,9 @@ def plotDecisionBoundary(theta, X, y):
         # Calculate the decision boundary line
         #plot_y = (-1./theta(3)).*(theta(2).*plot_x + theta(1));
         #决策边界：θ0+θ1x1+θ2x2=0
-        plot_y = np.dot((-1/theta[2]),(np.dot(theta[1], plot_x) + theta[0]));
+        #plot_y = (-1/theta[2]).dot(theta[1].dot(plot_x) + theta[0])
+        plot_y = (-1/theta[2])*(theta[1]*plot_x + theta[0]); #此处theta[0],theta[1],theta[2]都是标量值，因此是element-wise multiply
+        
 
         # Plot, and adjust axes for better viewing
         plt.plot(plot_x, plot_y)
@@ -111,30 +118,63 @@ def displayData(X, example_width = None):
     m, n = X.shape
     print("m, n: %s, %s"%(m,n))
     example_height = int(n / example_width);
+    
     display_rows = int(np.floor(np.sqrt(m)))
     display_cols = int(np.ceil(m / display_rows))
-    print ("display_rows:%s"%display_rows)
+    '''print ("display_rows:%s"%display_rows)
     print ("display_cols:%s"%display_cols)
-    """ sample 100 image and show them
-    assume the image is square
+    print ("example_height:%s"%example_height)
+    print ("example_width:%s"%example_width)'''
+    
+    # Between images padding
+    pad = 1;
 
-    X : (5000, 400)
-    """
+    # Setup blank display
+    display_array = - np.ones((pad + display_rows * (example_height + pad), \
+                           pad + display_cols * (example_width + pad)))
 
-    # sample 100 image, reshape, reorg it
-    #sample_idx = np.random.choice(np.arange(X.shape[0]), 100)  # 100*400
-    #sample_images = X[sample_idx, :]
-    sample_images = X
-
-    fig, ax_array = plt.subplots(nrows=display_rows, ncols=display_cols, sharey=True, sharex=True, figsize=(8, 8))
-
-    for r in range(display_rows):
-        for c in range(display_cols):
-            sample_images[display_cols * r + c]
-            ax_array[r, c].matshow(sample_images[display_cols * r + c].reshape((example_width, example_height)),
-                                   cmap=matplotlib.cm.binary)
-            plt.xticks(np.array([]))
-            plt.yticks(np.array([]))  
-            #绘图函数，画100张图片
+    # Copy each example into a patch on the display array
+    curr_ex = 0;
+    for j in range(display_rows):
+        for i in range(display_cols):
+            if curr_ex >= m:
+                break; 
             
+            # Copy the patch
+            
+            # Get the max value of the patch
+            max_val = np.max(np.absolute(X[curr_ex, :]))
+            rowidx_start = pad + j * (example_height + pad)
+            colidx_start = pad + i * (example_width + pad)
+            #print(rowidx_start)
+            #print(colidx_start)
+            np.reshape(X[curr_ex, :], (example_height, example_width))/max_val
+            display_array[rowidx_start:rowidx_start + example_height, \
+                          colidx_start:colidx_start + example_width] = \
+                            np.reshape(X[curr_ex, :], (example_height, example_width),order = 'F') / max_val 
+                            #MATLAB默认按列填充，如果不加order='F',显示的图片90度翻转加镜像反转
+            curr_ex = curr_ex + 1;
+        
+        if curr_ex > m:
+            break; 
+        
+    # Display Image
+    #h = plt.imshow(display_array, extent = [-1, 1]);
+    h = plt.imshow(display_array,cmap = plt.get_cmap("gray")) # 如使用'Greys'会是反转片效果
+    #h = plt.imshow(display_array)
+    #h = plt.imshow(display_array,cmap=matplotlib.cm.binary)
+    
+    
+    
+    # Do not show axis
+    #axis image off
+    plt.axis("off")
+    
     plt.show()
+    
+def drawLine(p1, p2, *args, **kwargs):
+    #DRAWLINE Draws a line from point p1 to point p2
+    #   DRAWLINE(p1, p2) Draws a line from point p1 to point p2 and holds the
+    #   current figure
+
+    plt.plot([p1[0], p2[0]], [p1[1], p2[1]], **kwargs)
