@@ -7,7 +7,19 @@ script_path = os.path.split(os.path.realpath(__file__))[0] # 获取plotting.py�
 sys.path.append(r"script_path\..")
 import lib.calc as calc
 
+def plotDataPoints(X, idx, K):
+    #PLOTDATAPOINTS plots data points in X, coloring them so that those with the same
+    #index assignments in idx have the same color
+    #   PLOTDATAPOINTS(X, idx, K) plots data points in X, coloring them so that those 
+    #   with the same index assignments in idx have the same color
 
+    # 忽略原MATLAB程序的实现细节
+    print(X.shape)
+    # Plot the data
+    plt.scatter(X[:,0], X[:,1], s=15, c=idx.ravel());
+    #plt.show()
+    # not using K?
+    
 def plotData(X, y):
     #PLOTDATA Plots the data points X and y into a new figure 
     #   PLOTDATA(x,y) plots the data points with + for the positive examples
@@ -170,7 +182,7 @@ def displayData(X, example_width = None):
     #axis image off
     plt.axis("off")
     
-    plt.show()
+    #plt.show()
     
 def drawLine(p1, p2, *args, **kwargs):
     #DRAWLINE Draws a line from point p1 to point p2
